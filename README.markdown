@@ -10,7 +10,7 @@ Cupboard Cruncher has no automated installation mechanism. You can install the l
 
 Downloading
 -------------
-Use the download link on the [main project page](https://github.com/vickyvivian/Cupboard-Cruncher).
+Use the download link on the [main project page](https://github.com/vickyvivian/cupboard-cruncher).
 
 
 Git Checkout
@@ -19,4 +19,4 @@ The following commands can be used to checkout Cupboard Cruncher:
 
     mkdir cupboard-cruncher
     cd cupboard-cruncher
-    git clone git://github.com/vickyvivian/Cupboard-Cruncher.git
+    git clone git://github.com/vickyvivian/cupboard-cruncher.git
