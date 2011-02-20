@@ -5,7 +5,7 @@ Cupboard Cruncher is a web application that matches recipes to ingredients. User
 
 Installation
 ------------
-Cupboard Cruncher has no automated installation mechanism. You can install the latest version of Cupboard Cruncher manually by downloading or checking out the code.
+Cupboard Cruncher has no automated installation mechanism. You can install the latest version of Cupboard Cruncher manually by downloading or checking out the code. You will need to rename db.sample.php to db.php in the application/config directory and modify the contents to include the correct settings for your database.
 
 
 Downloading
