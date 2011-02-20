@@ -6,3 +6,4 @@ $config['db'] = array(
     'username' => 'changeme',
     'password' => 'changeme',
 );
+
