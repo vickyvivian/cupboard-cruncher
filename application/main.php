@@ -10,6 +10,8 @@ try {
     error_log('Db Connection failure: ' . $e->getMessage());
 }
 
+$ingredient = (isset($_POST['ingredient'])) ? $_POST['ingredient'] : 'Cucumber';
+
 $stm = $db->query("
     SELECT 
         r.name AS recipe_name,
@@ -24,9 +26,15 @@ $stm = $db->query("
         `ingredient` i, 
         `recipe_ingredient` ri
     WHERE 
-        r.`id` = 1 
-        AND r.`id` = ri.`recipe_id` 
-        AND i.`id` = ri.`ingredient_id`
+        r.`id` IN (
+            SELECT r.`id`
+            FROM `recipe` r, `ingredient` i, `recipe_ingredient` ri
+            WHERE i.`name` LIKE '%{$ingredient}%'
+            AND r.`id` = ri.`recipe_id`
+            AND i.`id` = ri.`ingredient_id`
+        )
+    AND r.`id` = ri.`recipe_id` 
+    AND i.`id` = ri.`ingredient_id`
 ");
 
 $stm->setFetchMode(PDO::FETCH_ASSOC);
@@ -34,6 +42,8 @@ $stm->setFetchMode(PDO::FETCH_ASSOC);
 $recipe = $stm->fetchAll();
 $recipeDetail = $recipe[0];
 
+echo "<form action='?' method='post'>Showing recipes containing <input type='text' name='ingredient' value='" . $ingredient. "' /></form>";
+echo "<em>Showing recipes containing " . $ingredient. "</em>";
 echo "<h2>" . $recipeDetail['recipe_name'] . "</h2>";
 echo "<ul>"; 
 echo "<li>Serves " . $recipeDetail['serves'] . "</li>";
