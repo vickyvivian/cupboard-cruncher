@@ -11,67 +11,51 @@ try {
     error_log('Db Connection failure: ' . $e->getMessage());
 }
 
-$ingredient = (isset($_POST['ingredient'])) ? $_POST['ingredient'] : 'Cucumber';
+$ingredient = (isset($_POST['ingredient'])) ? $_POST['ingredient'] : '';
+require_once('searchForm.php');
 
-$stm = $db->query("
-    SELECT 
-        r.id as recipe_id,
-	r.name AS recipe_name,
-        r.method,
-        r.cook_minutes,
-        r.prepare_minutes,
-        r.serves,
-        i.name AS ingredient_name,
-        i.id as ingredient_id,
-        ri.quantity
-    FROM  
-        `recipe` r, 
-        `ingredient` i, 
-        `recipe_ingredient` ri
-    WHERE 
-        r.`id` IN (
-            SELECT r.`id`
-            FROM `recipe` r, `ingredient` i, `recipe_ingredient` ri
-            WHERE i.`name` LIKE '%{$ingredient}%'
-            AND r.`id` = ri.`recipe_id`
-            AND i.`id` = ri.`ingredient_id`
-        )
-    AND r.`id` = ri.`recipe_id` 
-    AND i.`id` = ri.`ingredient_id`
-");
+if (!empty($ingredient)) {
 
-$stm->setFetchMode(PDO::FETCH_ASSOC);
+    $stm = $db->query("
+        SELECT 
+            r.id as recipe_id,
+            r.name AS recipe_name,
+            r.method,
+            r.cook_minutes,
+            r.prepare_minutes,
+            r.serves,
+            i.name AS ingredient_name,
+            i.id as ingredient_id,
+            ri.quantity
+        FROM  
+            `recipe` r, 
+            `ingredient` i, 
+            `recipe_ingredient` ri
+        WHERE 
+            r.`id` IN (
+                SELECT r.`id`
+                FROM `recipe` r, `ingredient` i, `recipe_ingredient` ri
+                WHERE i.`name` LIKE '%{$ingredient}%'
+                AND r.`id` = ri.`recipe_id`
+                AND i.`id` = ri.`ingredient_id`
+            )
+        AND r.`id` = ri.`recipe_id` 
+        AND i.`id` = ri.`ingredient_id`
+    ");
 
-$recipes = array();
-while ($row = $stm->fetch()) {
-    $recipes[$row['recipe_id']]['name']             = $row['recipe_name'];
-    $recipes[$row['recipe_id']]['cook_minutes']     = $row['cook_minutes'];
-    $recipes[$row['recipe_id']]['prepare_minutes']  = $row['prepare_minutes'];
-    $recipes[$row['recipe_id']]['serves']           = $row['serves'];
-    $recipes[$row['recipe_id']]['method']           = $row['method'];
+    $stm->setFetchMode(PDO::FETCH_ASSOC);
 
-    $recipes[$row['recipe_id']]['ingredients'][$row['ingredient_id']]['name'] = $row['ingredient_name'];
-    $recipes[$row['recipe_id']]['ingredients'][$row['ingredient_id']]['quantity'] = $row['quantity'];
-}
+    $recipes = array();
+    while ($row = $stm->fetch()) {
+        $recipes[$row['recipe_id']]['name']             = $row['recipe_name'];
+        $recipes[$row['recipe_id']]['cook_minutes']     = $row['cook_minutes'];
+        $recipes[$row['recipe_id']]['prepare_minutes']  = $row['prepare_minutes'];
+        $recipes[$row['recipe_id']]['serves']           = $row['serves'];
+        $recipes[$row['recipe_id']]['method']           = $row['method'];
 
+        $recipes[$row['recipe_id']]['ingredients'][$row['ingredient_id']]['name'] = $row['ingredient_name'];
+        $recipes[$row['recipe_id']]['ingredients'][$row['ingredient_id']]['quantity'] = $row['quantity'];
+    }
 
-echo "<form action='?' method='post'>Showing recipes containing <input type='text' name='ingredient' value='" . $ingredient. "' /></form>";
-echo "<em>Showing recipes containing " . $ingredient. "</em>";
-
-foreach ($recipes as $recipe) {
-
-    echo "<h2>" . $recipe['name'] . "</h2>";
-    echo "<ul>"; 
-    echo "<li>Serves " . $recipe['serves'] . "</li>";
-    echo "<li>Preparation time: " . $recipe['prepare_minutes'] . " minutes</li>";
-    echo "<li>Cooking time: " . $recipe['cook_minutes'] . " minutes</li>";
-    echo "</ul>";
-
-    echo "<ul>"; 
-    foreach ($recipe['ingredients'] as $ingredient) {
-        echo "<li>" . $ingredient['quantity'] . ' ' . $ingredient['name'] . "</li>";
-    } 
-    echo "</ul>";
-
-    echo "<p>" . nl2br($recipe['method']) . "</p>";
+    require_once('recipeList.php');
 }
