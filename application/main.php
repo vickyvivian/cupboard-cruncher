@@ -15,12 +15,14 @@ $ingredient = (isset($_POST['ingredient'])) ? $_POST['ingredient'] : 'Cucumber';
 
 $stm = $db->query("
     SELECT 
-        r.name AS recipe_name,
+        r.id as recipe_id,
+	r.name AS recipe_name,
         r.method,
         r.cook_minutes,
         r.prepare_minutes,
         r.serves,
         i.name AS ingredient_name,
+        i.id as ingredient_id,
         ri.quantity
     FROM  
         `recipe` r, 
@@ -40,22 +42,36 @@ $stm = $db->query("
 
 $stm->setFetchMode(PDO::FETCH_ASSOC);
 
-$recipe = $stm->fetchAll();
-$recipeDetail = $recipe[0];
+$recipes = array();
+while ($row = $stm->fetch()) {
+    $recipes[$row['recipe_id']]['name']             = $row['recipe_name'];
+    $recipes[$row['recipe_id']]['cook_minutes']     = $row['cook_minutes'];
+    $recipes[$row['recipe_id']]['prepare_minutes']  = $row['prepare_minutes'];
+    $recipes[$row['recipe_id']]['serves']           = $row['serves'];
+    $recipes[$row['recipe_id']]['method']           = $row['method'];
+
+    $recipes[$row['recipe_id']]['ingredients'][$row['ingredient_id']]['name'] = $row['ingredient_name'];
+    $recipes[$row['recipe_id']]['ingredients'][$row['ingredient_id']]['quantity'] = $row['quantity'];
+}
+
 
 echo "<form action='?' method='post'>Showing recipes containing <input type='text' name='ingredient' value='" . $ingredient. "' /></form>";
 echo "<em>Showing recipes containing " . $ingredient. "</em>";
-echo "<h2>" . $recipeDetail['recipe_name'] . "</h2>";
-echo "<ul>"; 
-echo "<li>Serves " . $recipeDetail['serves'] . "</li>";
-echo "<li>Preparation time: " . $recipeDetail['prepare_minutes'] . " minutes</li>";
-echo "<li>Cooking time: " . $recipeDetail['cook_minutes'] . " minutes</li>";
-echo "</ul>";
 
-echo "<ul>"; 
-foreach ($recipe as $ingredient) {
-    echo "<li>" . $ingredient['quantity'] . ' ' . $ingredient['ingredient_name'] . "</li>";
-} 
-echo "</ul>";
+foreach ($recipes as $recipe) {
 
-echo "<p>" . nl2br($recipeDetail['method']) . "</p>";
+    echo "<h2>" . $recipe['name'] . "</h2>";
+    echo "<ul>"; 
+    echo "<li>Serves " . $recipe['serves'] . "</li>";
+    echo "<li>Preparation time: " . $recipe['prepare_minutes'] . " minutes</li>";
+    echo "<li>Cooking time: " . $recipe['cook_minutes'] . " minutes</li>";
+    echo "</ul>";
+
+    echo "<ul>"; 
+    foreach ($recipe['ingredients'] as $ingredient) {
+        echo "<li>" . $ingredient['quantity'] . ' ' . $ingredient['name'] . "</li>";
+    } 
+    echo "</ul>";
+
+    echo "<p>" . nl2br($recipe['method']) . "</p>";
+}
