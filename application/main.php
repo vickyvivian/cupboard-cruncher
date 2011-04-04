@@ -12,11 +12,17 @@ try {
 }
 
 $ingredient = (isset($_POST['ingredient'])) ? $_POST['ingredient'] : '';
+
+// Convert comma string into array
+$ingredients = explode(',', $ingredient); 
+$ingredients = array_map('trim', $ingredients);
+$ingredients = array_filter($ingredients);
+
 require_once('searchForm.php');
 
-if (!empty($ingredient)) {
+if (!empty($ingredients)) {
 
-    $stm = $db->query("
+    $query = "
         SELECT 
             r.id as recipe_id,
             r.name AS recipe_name,
@@ -41,7 +47,9 @@ if (!empty($ingredient)) {
             )
         AND r.`id` = ri.`recipe_id` 
         AND i.`id` = ri.`ingredient_id`
-    ");
+    ";
+
+    $stm = $db->query($query);
 
     $stm->setFetchMode(PDO::FETCH_ASSOC);
 
