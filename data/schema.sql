@@ -37,7 +37,9 @@ CREATE TABLE IF NOT EXISTS `recipe_ingredient` (
   `recipe_id` int(10) unsigned NOT NULL COMMENT 'Related recipe ID',
   `ingredient_id` int(10) unsigned NOT NULL COMMENT 'Related ingredient ID',
   `quantity` varchar(50) NOT NULL COMMENT 'Quantity of ingredient for this ingredient/recipe relation',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `fk_recipe_ingredient_ingredient` (`ingredient_id`),
+  KEY `fk_recipe_ingredient_recipe` (`recipe_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Represents the relationship between recipes and ingredient' AUTO_INCREMENT=14 ;
 
 INSERT INTO `recipe_ingredient` (`id`, `recipe_id`, `ingredient_id`, `quantity`) VALUES(1, 1, 8, '400g');
@@ -53,3 +55,8 @@ INSERT INTO `recipe_ingredient` (`id`, `recipe_id`, `ingredient_id`, `quantity`)
 INSERT INTO `recipe_ingredient` (`id`, `recipe_id`, `ingredient_id`, `quantity`) VALUES(11, 2, 9, '1/3 cup');
 INSERT INTO `recipe_ingredient` (`id`, `recipe_id`, `ingredient_id`, `quantity`) VALUES(12, 2, 10, '1/3 cup');
 INSERT INTO `recipe_ingredient` (`id`, `recipe_id`, `ingredient_id`, `quantity`) VALUES(13, 2, 11, '1 tsp');
+
+
+ALTER TABLE `recipe_ingredient`
+  ADD CONSTRAINT `fk_recipe_ingredient_ingredient` FOREIGN KEY (`ingredient_id`) REFERENCES `ingredient` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_recipe_ingredient_recipe1` FOREIGN KEY (`recipe_id`) REFERENCES `recipe` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
