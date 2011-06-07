@@ -1,7 +1,8 @@
 
-<form action='?' method='post'>
-    <p>Find recipes containing 
-       <input type='text' name='ingredient' value='<?php echo $ingredient; ?>' />
-    </p>
+<form id='search-form' class="shadow" action='?' method='post'>
+    <h1 id="logo">Cupboard Cruncher</h1>
+    <p><em>Find recipes containing...</em></p> 
+    <input type='text' id="ingredient" name='ingredient' value='<?php echo $requestedIngredients; ?>' />
+    <input type='submit' name="search" value='Search' />
 </form>
 

@@ -1,22 +1,24 @@
+<div id="recipe-panel">
+  <?php if (empty($recipes)) { ?>
+    <em>No matching recipes could be found.</em>
+  <?php } ?>
 
-<?php if (!empty($ingredient)) { ?>
-    <em>Showing recipes containing <?php echo $ingredient; ?></em>
-<?php } ?>
-
-<?php foreach ($recipes as $recipe) { ?>
-    <h2><?php echo $recipe['name'] ?></h2>
-    <ul> 
+  <?php foreach ($recipes as $recipe) { ?>
+    <div class="recipe">
+      <h2><?php echo $recipe['name'] ?></h2>
+      <ul class="preparation shadow"> 
         <li>Serves <?php echo $recipe['serves'] ?> </li>
         <li>Preparation time: <?php echo $recipe['prepare_minutes'] ?> minutes</li>
         <li>Cooking time: <?php echo $recipe['cook_minutes'] ?> minutes</li>
-    </ul>
+      </ul>
 
-    <ul> 
-    <?php foreach ($recipe['ingredients'] as $ingredient) { ?>
+      <ul class="ingredients shadow"> 
+      <?php foreach ($recipe['ingredients'] as $ingredient) { ?>
         <li> <?php echo $ingredient['quantity'] . ' ' . $ingredient['name'] ?> </li>
-    <?php } ?>
-    </ul>
+      <?php } ?>
+      </ul>
 
-    <p><?php echo nl2br($recipe['method']) ?></p>
-<?php } ?>
-
+      <p><?php echo nl2br($recipe['method']) ?></p>
+    </div>
+  <?php } ?>
+</div>

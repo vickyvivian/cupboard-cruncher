@@ -4,6 +4,8 @@ ini_set('display_errors', 1);
 
 require_once('config/app.php');
 
+require_once('head.php');
+
 try {
     $db = new PDO("mysql:host={$config['db']['hostname']};dbname={$config['db']['database']}", $config['db']['username'], $config['db']['password']);
     $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -11,16 +13,20 @@ try {
     error_log('Db Connection failure: ' . $e->getMessage());
 }
 
-$ingredient = (isset($_POST['ingredient'])) ? $_POST['ingredient'] : '';
+$requestedIngredients = (isset($_POST['ingredient'])) ? $_POST['ingredient'] : '';
 
 // Convert comma string into array
-$ingredients = explode(',', $ingredient); 
+$ingredients = explode(',', $requestedIngredients); 
 $ingredients = array_map('trim', $ingredients);
 $ingredients = array_filter($ingredients);
 
 require_once('searchForm.php');
 
 if (!empty($ingredients)) {
+    $ingredientFilter = " `name` LIKE '%" . array_shift($ingredients) . "%' ";
+    foreach ($ingredients as $ingredient) {
+        $ingredientFilter .= " OR `name` LIKE '%" . $ingredient . "%' ";
+    }
 
     $query = "
         SELECT 
@@ -41,7 +47,12 @@ if (!empty($ingredients)) {
             r.`id` IN (
                 SELECT r.`id`
                 FROM `recipe` r, `ingredient` i, `recipe_ingredient` ri
-                WHERE i.`name` LIKE '%{$ingredient}%'
+                WHERE i.id IN (
+ 		    SELECT id 
+                    FROM ingredient 
+                    WHERE {$ingredientFilter}
+                )     
+
                 AND r.`id` = ri.`recipe_id`
                 AND i.`id` = ri.`ingredient_id`
             )
@@ -67,3 +78,5 @@ if (!empty($ingredients)) {
 
     require_once('recipeList.php');
 }
+
+require_once('foot.php');
