@@ -1,4 +1,4 @@
-<div id="recipe-panel">
+<div id="recipe-panel" class="rounded center standard-border">
   <?php if (empty($recipes)) { ?>
     <em>No matching recipes could be found.</em>
   <?php } ?>
@@ -6,13 +6,13 @@
   <?php foreach ($recipes as $recipe) { ?>
     <div class="recipe">
       <h2><?php echo $recipe['name'] ?></h2>
-      <ul class="preparation shadow"> 
+      <ul class="highlight-box shadow center"> 
         <li>Serves <?php echo $recipe['serves'] ?> </li>
         <li>Preparation time: <?php echo $recipe['prepare_minutes'] ?> minutes</li>
         <li>Cooking time: <?php echo $recipe['cook_minutes'] ?> minutes</li>
       </ul>
 
-      <ul class="ingredients shadow"> 
+      <ul class="highlight-box shadow center"> 
       <?php foreach ($recipe['ingredients'] as $ingredient) { ?>
         <li> <?php echo $ingredient['quantity'] . ' ' . $ingredient['name'] ?> </li>
       <?php } ?>

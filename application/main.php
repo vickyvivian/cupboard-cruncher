@@ -5,6 +5,7 @@ ini_set('display_errors', 1);
 require_once('config/app.php');
 
 require_once('head.php');
+require_once('menu.php');
 
 try {
     $db = new PDO("mysql:host={$config['db']['hostname']};dbname={$config['db']['database']}", $config['db']['username'], $config['db']['password']);
