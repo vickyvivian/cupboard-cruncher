@@ -3,13 +3,30 @@ body {
   padding: 0;
 }
 
-#logo {
+h1 {
   color: MidnightBlue;
   margin-bottom: 2em;
   font-family: Verdana, sans;
 }
 
-#search-form {
+label {
+  padding: 1em;
+}
+
+input {
+  margin: 0.3em;
+}
+
+.error {
+  text-align: left;
+  color: #900;
+}
+
+#add-form td {
+  text-align: right;
+}
+
+.bright-box {
   width: 600px;
   padding: 0 5em 5em 5em;
   background-color: Gold;
