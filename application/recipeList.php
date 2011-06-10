@@ -5,6 +5,7 @@
 
   <?php foreach ($recipes as $recipe) { ?>
     <div class="recipe">
+      <h3>Match score <?php echo $recipe['match-percent'] ?>%</h3>
       <h2><?php echo $recipe['name'] ?></h2>
       <ul class="highlight-box shadow center"> 
         <li>Serves <?php echo $recipe['serves'] ?> </li>

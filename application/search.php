@@ -10,6 +10,9 @@ $ingredients = array_filter($ingredients);
 require_once('searchForm.php');
 
 if (!empty($ingredients)) {
+    // preserve requested ingredient array
+    $requiredIngredients = $ingredients;
+
     $ingredientFilter = " `name` LIKE '%" . array_shift($ingredients) . "%' ";
     foreach ($ingredients as $ingredient) {
         $ingredientFilter .= " OR `name` LIKE '%" . $ingredient . "%' ";
@@ -61,8 +64,36 @@ if (!empty($ingredients)) {
 
         $recipes[$row['recipe_id']]['ingredients'][$row['ingredient_id']]['name'] = $row['ingredient_name'];
         $recipes[$row['recipe_id']]['ingredients'][$row['ingredient_id']]['quantity'] = $row['quantity'];
+        
+        $recipes[$row['recipe_id']]['ingredient-check'][] = $row['ingredient_name'];
+    }
+    
+    // Score recipes based on ingredient match
+    $requiredIngredientNumber = count($requiredIngredients);
+    foreach ($recipes as $recipeId => $recipe) {
+        $matchedIngredientNumber = count(array_uintersect($requiredIngredients, $recipe['ingredient-check'], 'strcasecmp'));
+ 
+        $matchDistance = abs($requiredIngredientNumber - $matchedIngredientNumber);
+        // if we failed to exactly match any ingredient 
+        if ($matchDistance == $requiredIngredientNumber) {
+            // We don't want to show 0% so default to 10
+            $matchPercent = 10;
+        } else {
+            // We matched some ingredients so show percentage matched
+            $matchPercent  = floor((($requiredIngredientNumber - $matchDistance) / $requiredIngredientNumber) * 100);
+        }
+        $recipes[$recipeId]['match-percent']  = $matchPercent;
     }
 
+    uasort($recipes, 'compare_match_percent');
+
     require_once('recipeList.php');
+}
+
+function compare_match_percent($a, $b) {
+    if ($a['match-percent'] == $b['match-percent']) {
+        return 0;
+    }
+    return ($a['match-percent'] > $b['match-percent']) ? -1 : 1;
 }
 

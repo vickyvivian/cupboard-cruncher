@@ -9,6 +9,11 @@ h1 {
   font-family: Verdana, sans;
 }
 
+h3 {
+  margin:0;
+  float: right;
+}
+
 label {
   padding: 1em;
 }
@@ -54,12 +59,13 @@ input {
 }
 
 #recipe-panel {
-  width: 750px;
-  padding: 1em 5em;
+  width: 780px;
+  padding: 1em 2em;
   margin-top: 1em;
 }
 
 .recipe {
+  border-bottom: 1px solid GoldenRod;
   padding-bottom: 2em;
 }
 
